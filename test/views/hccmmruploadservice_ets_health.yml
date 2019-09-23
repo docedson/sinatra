@@ -1,0 +1,72 @@
+# The name of the template this config relates to
+template_name: 'ets_health'
+
+# The application name along with template name will be used to generate the name of the policy.
+
+# The 'name' of the account as configured for the organizations repo. The name will be translated to a id when applying
+# the policy. The application must be onboarded before attempting to create a policy for the application.
+accounts:
+- dev
+- staging
+- prod_us
+
+# The incident preference setting for the policy. Defaults to per policy. For more details see
+# https://docs.newrelic.com/docs/alerts/new-relic-alerts/configuring-alert-policies/specify-when-new-relic-creates-incidents
+incident_preference: 'PER_POLICY'
+
+# Default variables, channels and monitors. Overrides can be specified within the environments section
+defaults:
+  # The name of the application.
+  application_name: 'HCC_MmrUpload_US_Zone0'
+
+  email_channel:
+    type: 'email'
+    configuration:
+      recipients: DL_Groot_Squad@cerner.com
+      include_json_attachment: true
+
+  # Default variables used to configure thresholds and filters for alert conditions.
+  variables:
+    # The total memory the application has available to it. Within VM deployed environments this will
+    # be the total memory, in bytes, available to it. For applications deployed within containers this will
+    # be the total memory allocated for the container.
+    total_memory_gb: 1
+
+    # The threshold that alerts should be generated with respect to memory utilization. Defaults to
+    # 95% and should be a good default value for applications deployed within containers. Applications
+    # deployed on VMs will want to set this value lower.
+    total_memory_threshold_percent: 95
+
+    # The average response time, in seconds, over 5 minutes at which an alarm should be triggered. Defaults to
+    # 2 seconds.
+    average_response_time_threshold: 2
+
+    # Indicates if alert conditions should be active for the 90th, 95th and 99th percentile request
+    # response time.
+    monitor_request_percentiles: true
+
+    # The threshold, in milliseconds, that the 90th percentile of traffic should be under. Defaults to
+    # 2000 milliseconds.
+    ninetieth_request_percentile_threshold: 2000
+
+    # The threshold, in milliseconds, that the 95th percentile of traffic should be under. Defaults to
+    # 5000 milliseconds.
+    ninety_fifth_request_percentile_threshold: 5000
+
+    # The threshold, in milliseconds, that the 99th percentile of traffic should be under. Defaults to
+    # 10000 milliseconds.
+    ninety_nineth_request_percentile_threshold: 10000
+
+    # The value of the 'com.cerner.application' label within the docker image. This value is used to filter
+    # process metrics and will be used for applications deployed with docker.
+    docker_application_name: hcc-mmr-upload
+
+# Overrides of default variables and channels for a specific environment
+overrides:
+  dev:
+  staging:
+  prod_us:
+    email_channel:
+      configuration:
+        recipients: DL_Groot_Squad@cerner.com
+        
